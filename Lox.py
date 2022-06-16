@@ -1,6 +1,10 @@
+from Scanner import *
+
 class Lox:
-    def __init__(self, input:str) -> None:
+    def __init__(self, input=None) -> None:
         self.hadError = False
+        if (not input):
+            self.__runPrompt()
         if (len(input) > 1):
             print("Invalid Input, please specify a Lox script or run it in command line (empty input)")
             return
@@ -20,7 +24,7 @@ class Lox:
     # run Lox from command line
     def __runPrompt(self) -> None:
         while True:
-            line = input("Please enter something: ")
+            line = input(">  ")
             if (not line):
                 break
             self.__run(line)
@@ -28,11 +32,11 @@ class Lox:
         
     @staticmethod
     def __run(source:str) -> None:
-        scanner = None
+        scanner = Scanner(source)
         tokens = scanner.scanTokens()
 
         for token in tokens:
-            print(token)
+            token.toString()
         return
     
     def error(self, line:int, message:str) -> None:
@@ -45,4 +49,4 @@ class Lox:
         return
 
 
-        
+Lox()
