@@ -1,6 +1,9 @@
+from typing import TYPE_CHECKING
+
 from TokenType import *
 from Token import *
-# from Lox import *
+if TYPE_CHECKING:
+    from Lox import *
 
 class Scanner():
     def __init__(self, source:str) -> None:
