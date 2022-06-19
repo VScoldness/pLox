@@ -1,4 +1,6 @@
 from Scanner import *
+from Parser import *
+from AstPrinter import *
 
 class Lox:
     def __init__(self, input=None) -> None:
@@ -30,23 +32,36 @@ class Lox:
             self.__run(line)
             self.hadError = False
         
-    @staticmethod
-    def __run(source:str) -> None:
+    def __run(self, source:str) -> None:
         scanner = Scanner(source)
         tokens = scanner.scanTokens()
+        parser = Parser(tokens)
+        expression = parser.parse()
 
-        for token in tokens:
-            token.toString()
-        return
+        if (self.hadError):
+            return
+
+        # for token in tokens:
+        #     token.toString()
+        # return
+
+        # print(expression)
+
+        print(AstPrinter().out(expression))
+
     
     def error(self, line:int, message:str) -> None:
         self.__report(line, "", message)
         return
+    
+    def parserError(self, token: Token, message: str) -> None:
+        if (token.type == TokenType.EOF):
+            self.__report(token.line, " at end", message)
+        return self.__report(token.line, " at '{}'".format(token.lexeme), message)
 
     def __report(self, line:int, where:str, message:str) -> None:
         print(f"[line {line} ] Error {where} : {message}")
         self.hadError = True
         return
-
 
 Lox()
