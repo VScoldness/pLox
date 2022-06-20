@@ -1,9 +1,7 @@
-from typing import TYPE_CHECKING
-
+from ErrorHandler import *
 from TokenType import *
 from Token import *
-if TYPE_CHECKING:
-    from Lox import *
+
 
 class Scanner():
     def __init__(self, source:str) -> None:
@@ -77,7 +75,7 @@ class Scanner():
                 elif (c.isalpha() or c == '_'):
                     self.__indentifier()
                 else:
-                    Lox.error(self.__line, "Unexpected character.")
+                    ErrorHandler.error(self.__line, "Unexpected character.")
 
 
     def __indentifier(self) -> None:
@@ -116,7 +114,7 @@ class Scanner():
                 self.__line += 1
             self.__advance()
         if (self.__isAtEnd()):
-            Lox.error(self.__line, "Unterminated String")
+            ErrorHandler.error(self.__line, "Unterminated String")
             return
         self.__advance()
         string = self.source[self.__start+1, self.__current-1]

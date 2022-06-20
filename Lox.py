@@ -1,10 +1,11 @@
 from Scanner import *
 from Parser import *
 from AstPrinter import *
+from ErrorHandler import *
 
 class Lox:
     def __init__(self, input=None) -> None:
-        self.hadError = False
+        self.ErrorHandler = ErrorHandler()
         if (not input):
             self.__runPrompt()
         if (len(input) > 1):
@@ -20,7 +21,7 @@ class Lox:
         file = open(input, 'r')
         loxInput = file.read()
         self.__run(loxInput)
-        if (self.hadError):
+        if (self.ErrorHandler.hadError):
             return
     
     # run Lox from command line
@@ -30,7 +31,7 @@ class Lox:
             if (not line):
                 break
             self.__run(line)
-            self.hadError = False
+            self.ErrorHandler.hadError = False
         
     def __run(self, source:str) -> None:
         scanner = Scanner(source)
@@ -38,7 +39,7 @@ class Lox:
         parser = Parser(tokens)
         expression = parser.parse()
 
-        if (self.hadError):
+        if (self.ErrorHandler.hadError):
             return
 
         # for token in tokens:
@@ -48,20 +49,5 @@ class Lox:
         # print(expression)
 
         print(AstPrinter().out(expression))
-
-    
-    def error(self, line:int, message:str) -> None:
-        self.__report(line, "", message)
-        return
-    
-    def parserError(self, token: Token, message: str) -> None:
-        if (token.type == TokenType.EOF):
-            self.__report(token.line, " at end", message)
-        return self.__report(token.line, " at '{}'".format(token.lexeme), message)
-
-    def __report(self, line:int, where:str, message:str) -> None:
-        print(f"[line {line} ] Error {where} : {message}")
-        self.hadError = True
-        return
 
 Lox()

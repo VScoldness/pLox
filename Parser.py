@@ -1,8 +1,6 @@
-from typing import TYPE_CHECKING
-
+from ErrorHandler import *
 from Expr import *
-if TYPE_CHECKING:
-    from Lox import *
+
 
 class ParserError(RuntimeError):
     pass
@@ -131,7 +129,7 @@ class Parser:
     
 
     def __error(self, token: Token, message: str) -> ParserError:
-        Lox.error(token, message)
+        ErrorHandler.error(token, message)
         return ParserError()
     
 
