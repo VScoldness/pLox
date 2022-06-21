@@ -15,7 +15,7 @@ class Parser:
         try:
             return self.__expression()
         except:
-            print("Error Happen")
+            print("Error Happen") # How to handle error
             return
     
 
@@ -86,6 +86,7 @@ class Parser:
         if (self.__match(TokenType.LEFT_PAREN)):                return self.__group()
 
         raise self.__error(self.__peek(), "Expect expression.")
+
 
     def __group(self) -> Expr:
         expr = self.__expression()

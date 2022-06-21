@@ -9,23 +9,35 @@ class Binary(Expr):
         self.operator = operator
         self.right = right
     
+
     def accept(self, visitor):
         return visitor.visitBinaryExpr(self)
+
+
+
 
 class Unary(Expr):
     def __init__(self, operator: Token, right: Expr) -> None:
         self.operator = operator
         self.right = right
     
+
     def accept(self, visitor):
         return visitor.visitUnaryExpr(self)
+
+
+
 
 class Group(Expr):
     def __init__(self, expression: Expr) -> None:
         self.expression = expression
     
+
     def accept(self, visitor):
         return visitor.visitGroupExpr(self)
+
+
+
 
 class Literal(Expr):
     def __init__(self, val: object) -> None:
@@ -33,6 +45,8 @@ class Literal(Expr):
     
     def accept(self, visitor):
         return visitor.visitLiteralExpr(self)
+
+
 
 
 class Visitor:

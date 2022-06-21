@@ -16,6 +16,7 @@ class Lox:
         else:
             self.__runPrompt()
 
+
     # run Lox from script
     def __runFile(self, input:str) -> None:
         file = open(input, 'r')
@@ -24,6 +25,7 @@ class Lox:
         if (self.ErrorHandler.hadError):
             return
     
+
     # run Lox from command line
     def __runPrompt(self) -> None:
         while True:
@@ -33,6 +35,7 @@ class Lox:
             self.__run(line)
             self.ErrorHandler.hadError = False
         
+
     def __run(self, source:str) -> None:
         scanner = Scanner(source)
         tokens = scanner.scanTokens()
@@ -49,5 +52,7 @@ class Lox:
         # print(expression)
 
         print(AstPrinter().out(expression))
+
+
 
 Lox()

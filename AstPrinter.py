@@ -8,17 +8,21 @@ class AstPrinter(Visitor):
     def visitBinaryExpr(self, expr: Binary) -> str:
         return self.parenthesize(expr.operator.lexeme, [expr.left, expr.right])
 
+
     def visitGroupExpr(self, expr: Group) -> str:
         return self.parenthesize("Group", [expr.expression])
-    
+
+
     def visitLiteralExpr(self, expr: Literal) -> str:
         if (expr.val == None):
             return "nil"
         return str(expr.val)
 
+
     def visitUnaryExpr(self, expr: Unary) -> str:
         return self.parenthesize(expr.operator.lexeme, [expr.right])
-    
+
+
     def parenthesize(self, name: str, exprs: list[Expr]) -> str:
         res = "(" + name
         for expr in exprs:
@@ -26,6 +30,7 @@ class AstPrinter(Visitor):
             res += expr.accept(self)
         res += ")"
         return res
+
 
 def testForASTP():
     AP     = AstPrinter()

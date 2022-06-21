@@ -43,9 +43,11 @@ class Scanner():
         self.tokens.append(Token(TokenType.EOF, "", None, self.__line))
         return self.tokens
     
+    
     def __isAtEnd(self) -> bool:
         return self.__current >= len(self.source)
     
+
     def __scanToken(self) -> None:
         c = self.__advance() # !!!
         match c:
@@ -87,9 +89,11 @@ class Scanner():
             type = TokenType.IDENTIFIER
         self.__addToken(type)
 
+
     @staticmethod
     def __isAlphaNumericUnderscore(c:str):
         return c.isalpha() or c.isdigit() or c == '_'
+
 
     # find number in the script and save it into tokens
     def __number(self) -> None:
@@ -106,6 +110,7 @@ class Scanner():
         if (self.__current+1 >= len(self.source)):
             return '\0'
         return self.source[self.__current+1]
+
 
     # find string in the script and save it into tokens
     def __string(self) -> None:
