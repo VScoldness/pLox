@@ -24,8 +24,8 @@ class Lox:
         file = open(input, 'r')
         loxInput = file.read()
         self.__run(loxInput)
-        if (self.ErrorHandler.hadError):
-            return
+        # if (self.ErrorHandler.hadError):
+        #     return
     
 
     # run Lox from command line
@@ -35,7 +35,7 @@ class Lox:
             if (not line):
                 break
             self.__run(line)
-            self.ErrorHandler.hadError = False
+            # self.ErrorHandler.hadError = False
         
 
     def __run(self, source:str) -> None:
@@ -47,10 +47,10 @@ class Lox:
         if (self.ErrorHandler.hadError):
             return
 
-        # self.interpreter.interpreter(expression)
-        for token in tokens:
-            token.toString()
-        return
+        self.interpreter.interpreter(expression)
+        # for token in tokens:
+        #     token.toString()
+        # return
 
         # print(expression)
 

@@ -122,7 +122,7 @@ class Scanner():
             ErrorHandler.error(self.__line, "Unterminated String")
             return
         self.__advance()
-        string = self.source[self.__start+1, self.__current-1]
+        string = self.source[self.__start+1 : self.__current-1]
         self.__addToken(TokenType.STRING, string)
 
 
