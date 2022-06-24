@@ -12,10 +12,27 @@ class Parser:
     def parse(self) -> list[Stmt]:
         statements = []
         while (not self.__isAtEnd()):
-            statements.append(self.__statement())
+            statements.append(self.__declaration())
         # self.__consume(TokenType.EOF, "Expected EOF at the end of file")
         return statements
     
+    def __declaration(self) -> Stmt:
+        try:
+            if (self.__match(TokenType.VAR)):
+                return self.__varDecl()
+            return self.__statement()
+        except:
+            self.__synchronize()
+
+
+    def __varDecl(self) -> Stmt:
+        name = self.__consume(TokenType.IDENTIFIER, "Expect variable name.")
+
+        initializer = None
+        if (self.__match(TokenType.EQUAL)):
+            initializer = self.__expression()
+        self.__consume(TokenType.SEMICOLON, "Expect ; after variable declaration.")
+        return VarDecl(name, initializer)
 
     def __statement(self) -> Stmt:
         if (self.__match(TokenType.PRINT)):
@@ -90,6 +107,7 @@ class Parser:
         if (self.__match(TokenType.NIL)):                       return Literal(None)
         if (self.__match(TokenType.NUMBER, TokenType.STRING)):  return Literal(self.__previous().literal)
         if (self.__match(TokenType.LEFT_PAREN)):                return self.__group()
+        if (self.__match(TokenType.IDENTIFIER)):                return Variable(self.__previous())
         raise self.__error(self.__peek(), "Expect expression.")
 
 
