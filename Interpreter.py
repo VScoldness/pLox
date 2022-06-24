@@ -1,21 +1,35 @@
-from Expr import *
+# from Expr import *
+from Stmt import *
 
-class Interpreter(Visitor):
+class Interpreter(Visitor, VisitorStmt):
 
-    def interpreter(self, expression:Expr) -> None:
+    def interpreter(self, expressions: list[Stmt]) -> None:
         try:
-            val = self.__evaluate(expression)
-            print(val)
+            for expression in expressions:
+                self.__evaluate(expression)
         except RuntimeError as error:
             print(f"{error.args[1]} at [line {str(error.args[0].line)}]")
 
 
-    def __evaluate(self, expr: Expr):
+    def __evaluate(self, expr: Expr|Stmt):
         return expr.accept(self)
 
 
     # override
-    def visitLiteralExpr(self, expr: Literal):
+    def visitExprStm(self, stmt: ExprStmt) -> None:
+        self.__evaluate(stmt.expr)
+        return
+
+
+    # override
+    def visitPrintStmt(self, stmt: PrintStmt) -> None:
+        val = self.__evaluate(stmt.expr)
+        print(val)
+        return
+
+
+    # override
+    def visitLiteralExpr(self, expr: Literal) -> None:
         return expr.val
     
 

@@ -1,9 +1,7 @@
 from ErrorHandler import *
 from Expr import *
+from Stmt import *
 
-
-class ParserError(RuntimeError):
-    pass
 
 class Parser:
     def __init__(self, tokens: list[Token]) -> None:
@@ -11,13 +9,31 @@ class Parser:
         self.__current = 0
     
 
-    def parse(self) -> Expr:
-        try:
-            return self.__expression()
-        except:
-            print("Error Happen") # How to handle error
-            return
+    def parse(self) -> list[Stmt]:
+        statements = []
+        while (not self.__isAtEnd()):
+            statements.append(self.__statement())
+        # self.__consume(TokenType.EOF, "Expected EOF at the end of file")
+        return statements
     
+
+    def __statement(self) -> Stmt:
+        if (self.__match(TokenType.PRINT)):
+            return self.__printStmt()
+        return  self.__exprStmt()
+
+    
+    def __printStmt(self) -> Stmt:
+        val = self.__expression()
+        self.__consume(TokenType.SEMICOLON, "Expected ; after value")
+        return  PrintStmt(val)
+
+
+    def __exprStmt(self):
+        expr = self.__expression()
+        self.__consume(TokenType.SEMICOLON, "Expected ; after expression")
+        return ExprStmt(expr)
+
 
     def __expression(self) -> Expr:
         return self.__equality()
@@ -25,56 +41,46 @@ class Parser:
 
     def __equality(self) -> Expr:
         expr = self.__comparsion()
-
         while (self.__match(TokenType.BANG_EQUAL, TokenType.EQUAL_EQUAL)):
             operator = self.__previous()
             right = self.__comparsion()
             expr = Binary(expr, operator, right)
-        
         return expr
     
 
     def __comparsion(self) -> Expr:
         expr = self.__term()
-
         while (self.__match(TokenType.GREATER, TokenType.GREATER_EQUAL, TokenType.LESS, TokenType.LESS_EQUAL)):
             operator = self.__previous()
             right = self.__term()
             expr = Binary(expr, operator, right)
-        
         return expr
 
     
     def __term(self) -> Expr:
         expr = self.__factor()
-
         while (self.__match(TokenType.PLUS, TokenType.MINUS)):
             operator = self.__previous()
             right = self.__factor()
             expr = Binary(expr, operator, right)
-        
         return expr
     
 
     def __factor(self) -> Expr:
         expr = self.__unary()
-
         while (self.__match(TokenType.STAR, TokenType.SLASH)):
             operator = self.__previous()
             right = self.__unary()
             expr = Binary(expr, operator, right)
-        
         return expr
     
 
     def __unary(self) -> Expr:
-        
         if (self.__match(TokenType.MINUS, TokenType.BANG)):
             operator = self.__previous()
             right = self.__unary()
             expr = Unary(operator, right)
             return expr
-
         return self.__primary()
     
 
@@ -84,7 +90,6 @@ class Parser:
         if (self.__match(TokenType.NIL)):                       return Literal(None)
         if (self.__match(TokenType.NUMBER, TokenType.STRING)):  return Literal(self.__previous().literal)
         if (self.__match(TokenType.LEFT_PAREN)):                return self.__group()
-
         raise self.__error(self.__peek(), "Expect expression.")
 
 
@@ -129,9 +134,9 @@ class Parser:
         raise self.__error(self.__peek(), message)
     
 
-    def __error(self, token: Token, message: str) -> ParserError:
-        ErrorHandler.error(token, message)
-        return ParserError()
+    def __error(self, token: Token, message: str):
+        return ErrorHandler.error(token, message)
+        # return ParserError()
     
 
     def __synchronize(self) -> None:
@@ -139,7 +144,6 @@ class Parser:
 
         while (not self.__isAtEnd()):
             if (token.type == TokenType.EOF):   return
-
             match self.__peek().type:
                 case TokenType.CLASS:   return
                 case TokenType.FUN:     return
@@ -149,6 +153,5 @@ class Parser:
                 case TokenType.WHILE:   return
                 case TokenType.PRINT:   return
                 case TokenType.RETURN:  return
-            
             token = self.__advance()
 

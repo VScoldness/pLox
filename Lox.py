@@ -42,12 +42,12 @@ class Lox:
         scanner = Scanner(source)
         tokens = scanner.scanTokens()
         parser = Parser(tokens)
-        expression = parser.parse()
+        statements = parser.parse()
 
         if (self.ErrorHandler.hadError):
             return
 
-        self.interpreter.interpreter(expression)
+        self.interpreter.interpreter(statements)
         # for token in tokens:
         #     token.toString()
         # return
