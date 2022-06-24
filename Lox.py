@@ -2,10 +2,12 @@ from Scanner import *
 from Parser import *
 from AstPrinter import *
 from ErrorHandler import *
+from Interpreter import *
 
 class Lox:
     def __init__(self, input=None) -> None:
         self.ErrorHandler = ErrorHandler()
+        self.interpreter  = Interpreter()
         if (not input):
             self.__runPrompt()
         if (len(input) > 1):
@@ -45,13 +47,14 @@ class Lox:
         if (self.ErrorHandler.hadError):
             return
 
-        # for token in tokens:
-        #     token.toString()
-        # return
+        # self.interpreter.interpreter(expression)
+        for token in tokens:
+            token.toString()
+        return
 
         # print(expression)
 
-        print(AstPrinter().out(expression))
+        # print(AstPrinter().out(expression))
 
 
 
