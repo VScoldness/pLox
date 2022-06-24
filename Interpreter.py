@@ -1,7 +1,10 @@
 # from Expr import *
-from Stmt import *
+from Environment import *
 
 class Interpreter(Visitor, VisitorStmt):
+    def __init__(self) -> None:
+        self.env = Environment()
+
 
     def interpreter(self, expressions: list[Stmt]) -> None:
         try:
@@ -26,6 +29,21 @@ class Interpreter(Visitor, VisitorStmt):
         val = self.__evaluate(stmt.expr)
         print(val)
         return
+
+
+    # override
+    def visitVarVarDecl(self, stmt: VarDecl):
+        val = None
+        if (stmt.indentifier != None):
+            val = self.__evaluate(stmt.indentifier)
+
+        self.env.define(stmt.name.lexeme, val)
+        return None
+
+
+    # override
+    def visitVariableExpr(self, expr: Variable) -> object:
+        return self.env.get(expr.name)
 
 
     # override
