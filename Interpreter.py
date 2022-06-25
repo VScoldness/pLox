@@ -19,6 +19,13 @@ class Interpreter(Visitor, VisitorStmt):
 
 
     # override
+    def visitWhileStmt(self, stmt: WhileStmt) -> None:
+        while (self.__evaluate(stmt.condition)):
+            self.__evaluate(stmt.body)
+        return 
+
+
+    # override
     def visitLogicalExpr(self, expr: Logical):
         left = self.__evaluate(expr.left)
         if (expr.operator.type == TokenType.OR):
@@ -37,7 +44,7 @@ class Interpreter(Visitor, VisitorStmt):
 
     # override
     def visitBlock(self, stmt: Block):
-        self.__excuteBlock(stmt.statements, Environment())
+        self.__excuteBlock(stmt.statements, Environment(self.__env))
         return
     
 
@@ -46,7 +53,6 @@ class Interpreter(Visitor, VisitorStmt):
         try:
             self.__env = env
             for stmt in stmts:
-                # print("Here")
                 self.__evaluate(stmt)
         finally:
             self.__env = previous

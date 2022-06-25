@@ -41,9 +41,18 @@ class IF(Stmt):
     def accept(self, visitor):
         return visitor.visitIF(self)
 
+class WhileStmt(Stmt):
+    def __init__(self, condition: Expr, body: Stmt) -> None:
+        self.condition = condition
+        self.body = body
+    
+    def accept(self, visitor):
+        return visitor.visitWhileStmt(self)
+
 class VisitorStmt:
     def visitExprStm(self):  pass
     def visitPrintStmt(self):   pass
     def visitVarVarDecl(self): pass
     def visitBlock(self):   pass
     def visitIF(self):      pass
+    def visitWhileStmt(self):   pass

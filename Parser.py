@@ -35,13 +35,19 @@ class Parser:
         return VarDecl(name, initializer)
 
     def __statement(self) -> Stmt:
-        if (self.__match(TokenType.PRINT)):
-            return self.__printStmt()
-        if (self.__match(TokenType.LEFT_BRACE)):
-            return self.__block()
-        if (self.__match(TokenType.IF)):
-            return self.__if()
+        if (self.__match(TokenType.PRINT)):         return self.__printStmt()
+        if (self.__match(TokenType.LEFT_BRACE)):    return self.__block()
+        if (self.__match(TokenType.IF)):            return self.__if()
+        if (self.__match(TokenType.WHILE)):         return self.__whileStmt()
         return  self.__exprStmt()
+
+
+    def __whileStmt(self) -> Stmt:
+        self.__consume(TokenType.LEFT_PAREN, "Expect ( after while")
+        condition = self.__expression()
+        self.__consume(TokenType.RIGHT_PAREN, "Expect ) after while condition")
+        body = self.__statement()
+        return WhileStmt(condition, body)
 
 
     def __if(self):
