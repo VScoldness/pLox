@@ -32,8 +32,18 @@ class Block(Stmt):
     def accept(self, visitor):
         return visitor.visitBlock(self)
 
+class IF(Stmt):
+    def __init__(self, condition: Expr, thenBranch: Stmt, elseBranch: Stmt):
+        self.condition = condition
+        self.thenBranch = thenBranch
+        self.elseBranch = elseBranch
+    
+    def accept(self, visitor):
+        return visitor.visitIF(self)
+
 class VisitorStmt:
     def visitExprStm(self):  pass
     def visitPrintStmt(self):   pass
     def visitVarVarDecl(self): pass
     def visitBlock(self):   pass
+    def visitIF(self):      pass

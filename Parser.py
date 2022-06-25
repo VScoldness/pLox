@@ -21,7 +21,7 @@ class Parser:
             if (self.__match(TokenType.VAR)):
                 return self.__varDecl()
             return self.__statement()
-        except ErrorHandler.error():
+        except:
             self.__synchronize()
 
 
@@ -39,8 +39,20 @@ class Parser:
             return self.__printStmt()
         if (self.__match(TokenType.LEFT_BRACE)):
             return self.__block()
+        if (self.__match(TokenType.IF)):
+            return self.__if()
         return  self.__exprStmt()
 
+
+    def __if(self):
+        self.__consume(TokenType.LEFT_PAREN, "Expect ( after if")
+        condition = self.__expression()
+        self.__consume(TokenType.RIGHT_PAREN, "Expect ) after if condition")
+        thenBranch = self.__statement()
+        elseBranch = None
+        if (self.__match(TokenType.ELSE)):
+            elseBranch = self.__statement()
+        return  IF(condition, thenBranch, elseBranch)
     
     def __block(self):
         statements = []
@@ -68,7 +80,7 @@ class Parser:
     
 
     def __assignment(self) -> Expr:
-        expr = self.__equality()
+        expr = self.__logic_or()
 
         if (self.__match(TokenType.EQUAL)):
             equals = self.__previous()
@@ -78,7 +90,25 @@ class Parser:
                 return Assign(name, val)
             raise self.__error(equals, "Invalid assignment target")
 
-        return expr            
+        return expr     
+
+
+    def __logic_or(self) -> Expr:
+        expr = self.__logic_and()
+        while (self.__match(TokenType.OR)):
+            operator = self.__previous()
+            right = self.__logic_and()
+            expr = Logical(expr, operator, right)
+        return expr
+
+    
+    def __logic_and(self) -> Expr:
+        expr = self.__equality()
+        while (self.__match(TokenType.AND)):
+            operator = self.__previous()
+            right = self.__equality()
+            expr = Logical(expr, operator, right)
+        return expr
 
 
     def __equality(self) -> Expr:

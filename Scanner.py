@@ -19,6 +19,7 @@ class Scanner():
         keywords['and']     = TokenType.AND
         keywords['class']   = TokenType.CLASS
         keywords['else']    = TokenType.ELSE
+        keywords['false']    = TokenType.FALSE
         keywords['for']     = TokenType.FOR
         keywords['fun']     = TokenType.FUN
         keywords['if']      = TokenType.IF

@@ -19,6 +19,23 @@ class Interpreter(Visitor, VisitorStmt):
 
 
     # override
+    def visitLogicalExpr(self, expr: Logical):
+        left = self.__evaluate(expr.left)
+        if (expr.operator.type == TokenType.OR):
+            if (left):  return left
+        else:
+            if (not left):  return left
+        return self.__evaluate(expr.right)
+
+    # override
+    def visitIF(self, stmt: IF) -> None:
+        if (self.__evaluate(stmt.condition)):
+            self.__evaluate(stmt.thenBranch)
+        elif (stmt.elseBranch != None):
+            self.__evaluate(stmt.elseBranch)
+        return
+
+    # override
     def visitBlock(self, stmt: Block):
         self.__excuteBlock(stmt.statements, Environment())
         return
