@@ -25,7 +25,15 @@ class VarDecl(Stmt):
     def accept(self, visitor):
         return visitor.visitVarVarDecl(self)
 
+class Block(Stmt):
+    def __init__(self, statements: list[Stmt]) -> None:
+        self.statements = statements
+    
+    def accept(self, visitor):
+        return visitor.visitBlock(self)
+
 class VisitorStmt:
     def visitExprStm(self):  pass
     def visitPrintStmt(self):   pass
     def visitVarVarDecl(self): pass
+    def visitBlock(self):   pass

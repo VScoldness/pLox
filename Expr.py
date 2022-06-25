@@ -46,6 +46,15 @@ class Variable(Expr):
     def accept(self, visitor):
         return visitor.visitVariableExpr(self)
 
+class Assign(Expr):
+    def __init__(self, name: Token, val: Expr) -> None:
+        self.name = name
+        self.val  = val
+    
+    def accept(self, visitor):
+        return visitor.visitAssignExpr(self)
+
+
 
 class Visitor:
     def visitBinaryExpr(self):  pass
@@ -53,4 +62,5 @@ class Visitor:
     def visitGroupExpr(self):   pass
     def visitLiteralExpr(self): pass
     def visitVariableExpr(self): pass
+    def visitAssignExpr(self):  pass
 

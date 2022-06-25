@@ -47,12 +47,15 @@ class Lox:
         if (self.ErrorHandler.hadError):
             return
 
-        self.interpreter.interpreter(statements)
         # for token in tokens:
         #     token.toString()
-        # return
 
-        # print(expression)
+        # for stmt in statements:
+        #     print(stmt)
+
+        self.interpreter.interpreter(statements)
+        
+
 
         # print(AstPrinter().out(expression))
 

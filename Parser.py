@@ -21,7 +21,7 @@ class Parser:
             if (self.__match(TokenType.VAR)):
                 return self.__varDecl()
             return self.__statement()
-        except:
+        except ErrorHandler.error():
             self.__synchronize()
 
 
@@ -37,9 +37,20 @@ class Parser:
     def __statement(self) -> Stmt:
         if (self.__match(TokenType.PRINT)):
             return self.__printStmt()
+        if (self.__match(TokenType.LEFT_BRACE)):
+            return self.__block()
         return  self.__exprStmt()
 
     
+    def __block(self):
+        statements = []
+        while (not self.__check(TokenType.RIGHT_BRACE)):
+            stmt = self.__declaration()
+            statements.append(stmt)
+        self.__consume(TokenType.RIGHT_BRACE, "Expect } after block.")
+        return Block(statements)
+
+
     def __printStmt(self) -> Stmt:
         val = self.__expression()
         self.__consume(TokenType.SEMICOLON, "Expected ; after value")
@@ -53,8 +64,22 @@ class Parser:
 
 
     def __expression(self) -> Expr:
-        return self.__equality()
+        return self.__assignment()
     
+
+    def __assignment(self) -> Expr:
+        expr = self.__equality()
+
+        if (self.__match(TokenType.EQUAL)):
+            equals = self.__previous()
+            val    = self.__assignment()
+            if (isinstance(expr, Variable)):
+                name = expr.name
+                return Assign(name, val)
+            raise self.__error(equals, "Invalid assignment target")
+
+        return expr            
+
 
     def __equality(self) -> Expr:
         expr = self.__comparsion()

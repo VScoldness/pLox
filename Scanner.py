@@ -54,7 +54,7 @@ class Scanner():
             case "(": self.__addToken(TokenType.LEFT_PAREN)
             case ')': self.__addToken(TokenType.RIGHT_PAREN)
             case '{': self.__addToken(TokenType.LEFT_BRACE)
-            case '}': self.__addToken(TokenType.RIGHT_PAREN)
+            case '}': self.__addToken(TokenType.RIGHT_BRACE)
             case ',': self.__addToken(TokenType.COMMA)
             case '.': self.__addToken(TokenType.DOT)
             case '-': self.__addToken(TokenType.MINUS)

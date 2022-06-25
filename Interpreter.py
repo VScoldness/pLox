@@ -3,7 +3,7 @@ from Environment import *
 
 class Interpreter(Visitor, VisitorStmt):
     def __init__(self) -> None:
-        self.env = Environment()
+        self.__env = Environment()
 
 
     def interpreter(self, expressions: list[Stmt]) -> None:
@@ -14,9 +14,27 @@ class Interpreter(Visitor, VisitorStmt):
             print(f"{error.args[1]} at [line {str(error.args[0].line)}]")
 
 
-    def __evaluate(self, expr: Expr|Stmt):
+    def __evaluate(self, expr: Expr|Stmt) -> object:
         return expr.accept(self)
 
+
+    # override
+    def visitBlock(self, stmt: Block):
+        self.__excuteBlock(stmt.statements, Environment())
+        return
+    
+
+    def __excuteBlock(self, stmts: list[Stmt], env: Environment) -> None:
+        previous = self.__env
+        try:
+            self.__env = env
+            for stmt in stmts:
+                # print("Here")
+                self.__evaluate(stmt)
+        finally:
+            self.__env = previous
+        return
+        
 
     # override
     def visitExprStm(self, stmt: ExprStmt) -> None:
@@ -32,32 +50,39 @@ class Interpreter(Visitor, VisitorStmt):
 
 
     # override
-    def visitVarVarDecl(self, stmt: VarDecl):
+    def visitVarVarDecl(self, stmt: VarDecl) -> None:
         val = None
         if (stmt.indentifier != None):
             val = self.__evaluate(stmt.indentifier)
 
-        self.env.define(stmt.name.lexeme, val)
+        self.__env.define(stmt.name.lexeme, val)
         return None
 
 
     # override
     def visitVariableExpr(self, expr: Variable) -> object:
-        return self.env.get(expr.name)
+        return self.__env.get(expr.name)
+
+    
+    # override
+    def visitAssignExpr(self, expr: Assign) -> None:
+        val = self.__evaluate(expr.val)
+        self.__env.assign(expr.name, val)
+        return
 
 
     # override
-    def visitLiteralExpr(self, expr: Literal) -> None:
+    def visitLiteralExpr(self, expr: Literal) -> object:
         return expr.val
     
 
     # override
-    def visitGroupExpr(self, expr: Group):
+    def visitGroupExpr(self, expr: Group) -> object:
         return self.__evaluate(expr.expression)
     
 
     # override
-    def visitUnaryExpr(self, expr: Unary):
+    def visitUnaryExpr(self, expr: Unary) -> object:
         right = self.__evaluate(expr.right)
         if (expr.operator.type == TokenType.MINUS):
             self.__checkNumberOperator(expr.operator, right)
@@ -69,7 +94,7 @@ class Interpreter(Visitor, VisitorStmt):
     
 
     # override
-    def visitBinaryExpr(self, expr: Binary):
+    def visitBinaryExpr(self, expr: Binary) -> object:
         left = self.__evaluate(expr.left)
         right = self.__evaluate(expr.right)
 
