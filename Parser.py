@@ -35,12 +35,42 @@ class Parser:
         return VarDecl(name, initializer)
 
     def __statement(self) -> Stmt:
+        if (self.__match(TokenType.FOR)):           return self.__forStmt()
         if (self.__match(TokenType.PRINT)):         return self.__printStmt()
         if (self.__match(TokenType.LEFT_BRACE)):    return self.__block()
         if (self.__match(TokenType.IF)):            return self.__if()
         if (self.__match(TokenType.WHILE)):         return self.__whileStmt()
         return  self.__exprStmt()
 
+
+    def __forStmt(self) -> Stmt:
+        self.__consume(TokenType.LEFT_PAREN, "Expect ( after for.")
+        if (self.__match(TokenType.SEMICOLON)): initializer = None
+        elif(self.__match(TokenType.VAR)):      initializer = self.__varDecl()
+        else:                                   initializer = self.__exprStmt()
+
+        condition = None
+        if (not self.__check(TokenType.SEMICOLON)):
+            condition = self.__expression()
+        self.__consume(TokenType.SEMICOLON, "Expect ; after loop condition.")
+
+        increment = None
+        if (not self.__check(TokenType.RIGHT_PAREN)):
+            increment = self.__expression()
+        self.__consume(TokenType.RIGHT_PAREN, "Expect ) after for clauses.")
+        body = self.__statement()
+
+        if (increment):
+            body = Block([body, ExprStmt(increment)])
+
+        if (not condition):
+            condition = Literal(True)
+        body = WhileStmt(condition, body)
+
+        if (initializer):
+            body = Block([initializer, body])
+        
+        return body
 
     def __whileStmt(self) -> Stmt:
         self.__consume(TokenType.LEFT_PAREN, "Expect ( after while")
