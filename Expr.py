@@ -65,6 +65,14 @@ class Logical(Expr):
         return visitor.visitLogicalExpr(self)
         
 
+class Call(Expr):
+    def __init__(self, callee: Expr, paren: Token, arguments: list[Expr]) -> None:
+        self.callee = callee
+        self.paren = paren
+        self.arguments = arguments
+    
+    def accept(self, visitor):
+        return visitor.visitCallExpr(self)
 
 
 class Visitor:
@@ -75,4 +83,5 @@ class Visitor:
     def visitVariableExpr(self): pass
     def visitAssignExpr(self):  pass
     def visitLogicalExpr(self): pass
+    def visitCallExpr(self):    pass
 

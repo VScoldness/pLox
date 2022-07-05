@@ -49,6 +49,15 @@ class WhileStmt(Stmt):
     def accept(self, visitor):
         return visitor.visitWhileStmt(self)
 
+class FuncStmt(Stmt):
+    def __init__(self, name: Token, params: list[Token], body: list[Stmt]) -> None:
+        self.name = name
+        self.params = params
+        self.body = body
+    
+    def accept(self, visitor):
+        return visitor.visitFuncStmt(self)
+
 class VisitorStmt:
     def visitExprStm(self):  pass
     def visitPrintStmt(self):   pass
@@ -56,3 +65,4 @@ class VisitorStmt:
     def visitBlock(self):   pass
     def visitIF(self):      pass
     def visitWhileStmt(self):   pass
+    def visitFuncStmt(self):    pass

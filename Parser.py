@@ -18,12 +18,29 @@ class Parser:
     
     def __declaration(self) -> Stmt:
         try:
-            if (self.__match(TokenType.VAR)):
-                return self.__varDecl()
+            if (self.__match(TokenType.FUN)):   return self.__funcDecl("function")
+            if (self.__match(TokenType.VAR)):   return self.__varDecl()
             return self.__statement()
         except:
             self.__synchronize()
 
+
+    def __funcDecl(self, kind: str) -> FuncStmt:
+        name = self.__consume(TokenType.IDENTIFIER, f"Expect {kind} name.")
+        self.__consume(TokenType.LEFT_PAREN, f"Expect ( after {kind} name.")
+        parameters = []
+        if (not self.__check(TokenType.RIGHT_PAREN)):
+            while (True):
+                if (len(parameters) >= 255):
+                    self.__error(self.__peek(), "Can not have more than 255 parameters.")
+                parameters.append(self.__consume(TokenType.IDENTIFIER, "Expect parameter name."))
+                if (not self.__match(TokenType.COMMA)):
+                    break
+        self.__consume(TokenType.RIGHT_PAREN, "Expect ) after parameters.")
+
+        self.__consume(TokenType.LEFT_BRACE, f"Expect \u007b before {kind} body.")
+        body = self.__block()
+        return FuncStmt(name, parameters, body)
 
     def __varDecl(self) -> Stmt:
         name = self.__consume(TokenType.IDENTIFIER, "Expect variable name.")
@@ -189,8 +206,33 @@ class Parser:
             right = self.__unary()
             expr = Unary(operator, right)
             return expr
-        return self.__primary()
+        return self.__call()
     
+    def __call(self) -> Expr:
+        expr = self.__primary()
+        while (True):
+            if (self.__match(TokenType.LEFT_PAREN)):
+                expr = self.__finishCall(expr)
+            else:
+                break
+
+        return expr
+    
+
+    def __finishCall(self, callee: Expr) -> Expr:
+        arguments = []
+        if (not self.__check(TokenType.RIGHT_PAREN)):
+            while (True):
+                if (len(arguments) >= 255):
+                    self.__error(self.__peek(), "Can not have more than 255 arguments.")
+                arguments.append(self.__expression())
+                if (not self.__match(TokenType.COMMA)):
+                    break
+        
+        paren = self.__consume(TokenType.RIGHT_PAREN, "Expect ) after arguments.")
+        return Call(callee, paren, arguments)
+
+
 
     def __primary(self) -> Expr:
         if (self.__match(TokenType.FALSE)):                     return Literal(False)

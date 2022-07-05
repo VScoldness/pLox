@@ -1,6 +1,11 @@
 # from Expr import *
 from Environment import *
 
+class LoxCallable:
+    def call(interpreter, arguments: list[object]) -> object:
+        pass
+
+
 class Interpreter(Visitor, VisitorStmt):
     def __init__(self) -> None:
         self.__env = Environment()
@@ -151,6 +156,19 @@ class Interpreter(Visitor, VisitorStmt):
                 raise RuntimeError(expr.operator, "Operand must be string or number")
             
     
+    # override
+    def visitCallExpr(self, expr: Call) -> object:
+        callee = self.__evaluate(expr.callee)
+        arguments = []
+        for argument in expr.arguments:
+            arguments.append(argument)
+        # !!!
+        func = LoxCallable()
+        
+        return  func
+
+
+
     def __checkNumberOperator(self, operator: Token, *operands: object) -> None:
         for op in operands:
             if (not isinstance(op, (float, int))):
