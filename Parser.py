@@ -54,7 +54,7 @@ class Parser:
     def __statement(self) -> Stmt:
         if (self.__match(TokenType.FOR)):           return self.__forStmt()
         if (self.__match(TokenType.PRINT)):         return self.__printStmt()
-        if (self.__match(TokenType.LEFT_BRACE)):    return self.__block()
+        if (self.__match(TokenType.LEFT_BRACE)):    return Block(self.__block())
         if (self.__match(TokenType.IF)):            return self.__if()
         if (self.__match(TokenType.WHILE)):         return self.__whileStmt()
         return  self.__exprStmt()
@@ -113,7 +113,7 @@ class Parser:
             stmt = self.__declaration()
             statements.append(stmt)
         self.__consume(TokenType.RIGHT_BRACE, "Expect } after block.")
-        return Block(statements)
+        return statements
 
 
     def __printStmt(self) -> Stmt:

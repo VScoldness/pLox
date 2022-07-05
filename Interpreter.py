@@ -1,14 +1,10 @@
-# from Expr import *
-from Environment import *
-
-class LoxCallable:
-    def call(interpreter, arguments: list[object]) -> object:
-        pass
+from LoxFunction import *
 
 
 class Interpreter(Visitor, VisitorStmt):
     def __init__(self) -> None:
-        self.__env = Environment()
+        self.globals = Environment()
+        self.__env   = self.globals
 
 
     def interpreter(self, expressions: list[Stmt]) -> None:
@@ -22,6 +18,12 @@ class Interpreter(Visitor, VisitorStmt):
     def __evaluate(self, expr: Expr|Stmt) -> object:
         return expr.accept(self)
 
+
+    # override
+    def visitFuncStmt(self, stmt: FuncStmt) -> None:
+        func = LoxFuntion(stmt)
+        self.__env.define(stmt.name.lexeme, func)
+        return 
 
     # override
     def visitWhileStmt(self, stmt: WhileStmt) -> None:
@@ -49,12 +51,13 @@ class Interpreter(Visitor, VisitorStmt):
 
     # override
     def visitBlock(self, stmt: Block):
-        self.__excuteBlock(stmt.statements, Environment(self.__env))
+        self.executeBlock(stmt.statements, Environment(self.__env))
         return
     
 
-    def __excuteBlock(self, stmts: list[Stmt], env: Environment) -> None:
+    def executeBlock(self, stmts: list[Stmt], env: Environment) -> None:
         previous = self.__env
+
         try:
             self.__env = env
             for stmt in stmts:
@@ -161,11 +164,13 @@ class Interpreter(Visitor, VisitorStmt):
         callee = self.__evaluate(expr.callee)
         arguments = []
         for argument in expr.arguments:
-            arguments.append(argument)
-        # !!!
-        func = LoxCallable()
-        
-        return  func
+            arguments.append(self.__evaluate(argument))
+        if (not isinstance(callee, LoxCallable)):
+            raise RuntimeError(expr.paren, "Can only call functions and classes.")
+        if (len(arguments) != callee.arity()):
+            raise RuntimeError(expr.paren, f"Expected {callee.arity()} arguments but got {len(arguments)}.")
+        interpreter = Interpreter()
+        return  callee.call(interpreter, arguments)
 
 
 

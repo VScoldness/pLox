@@ -51,7 +51,9 @@ class Lox:
         #     token.toString()
 
         # for stmt in statements:
-        #     print(stmt)
+            # print(stmt)
+            # print(stmt.body)
+            # print(stmt.body.statements)
 
         self.interpreter.interpreter(statements)
         
