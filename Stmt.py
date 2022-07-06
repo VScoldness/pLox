@@ -58,11 +58,20 @@ class FuncStmt(Stmt):
     def accept(self, visitor):
         return visitor.visitFuncStmt(self)
 
+class ReturnStmt(Stmt):
+    def __init__(self, keyword: Token, val: Expr):
+        self.keyword = keyword
+        self.val = val
+
+    def accept(self, visitor):
+        return visitor.visitReturnStmt(self)
+
 class VisitorStmt:
-    def visitExprStm(self):  pass
+    def visitExprStm(self):     pass
     def visitPrintStmt(self):   pass
-    def visitVarVarDecl(self): pass
-    def visitBlock(self):   pass
-    def visitIF(self):      pass
+    def visitVarVarDecl(self):  pass
+    def visitBlock(self):       pass
+    def visitIF(self):          pass
     def visitWhileStmt(self):   pass
     def visitFuncStmt(self):    pass
+    def visitReturnStmt(self):  pass

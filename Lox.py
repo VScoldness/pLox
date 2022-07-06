@@ -62,5 +62,5 @@ class Lox:
         # print(AstPrinter().out(expression))
 
 
-
-Lox()
+input = ["test/function_test.txt"]
+Lox(input)

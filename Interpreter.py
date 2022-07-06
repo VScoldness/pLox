@@ -19,6 +19,13 @@ class Interpreter(Visitor, VisitorStmt):
         return expr.accept(self)
 
 
+    # overridee
+    def visitReturnStmt(self, stmt: ReturnStmt) -> None:
+        val = None
+        if (stmt.val != None):
+            val = self.__evaluate(stmt.val)
+        raise Exception(val)
+
     # override
     def visitFuncStmt(self, stmt: FuncStmt) -> None:
         func = LoxFuntion(stmt)
@@ -169,8 +176,7 @@ class Interpreter(Visitor, VisitorStmt):
             raise RuntimeError(expr.paren, "Can only call functions and classes.")
         if (len(arguments) != callee.arity()):
             raise RuntimeError(expr.paren, f"Expected {callee.arity()} arguments but got {len(arguments)}.")
-        interpreter = Interpreter()
-        return  callee.call(interpreter, arguments)
+        return  callee.call(self, arguments)
 
 
 

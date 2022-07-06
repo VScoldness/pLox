@@ -10,7 +10,13 @@ class LoxFuntion(LoxCallable):
         env = Environment(interpreter.globals)
         for idx in range(len(arguments)):
             env.define(self.declaration.params[idx].lexeme, arguments[idx])
-        interpreter.executeBlock(self.declaration.body, env)
+        try:
+            interpreter.executeBlock(self.declaration.body, env)
+        except RuntimeError as error:
+            print(f"{error.args[1]} at [line {str(error.args[0].line)}]")
+        except Exception as error:
+            return error.args[0]
+        
         return None
     
     # override

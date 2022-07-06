@@ -1,0 +1,28 @@
+fun add(a, b) {
+    print(a+b);
+}
+
+add(1,2);
+
+fun fib(n) {
+    if (n <= 1) return n;
+    return fib(n - 2) + fib(n - 1);
+}
+
+for (var i = 0; i < 20; i = i + 1) {
+    print fib(i);
+}
+
+fun time(a, b) {
+    return (a*b);
+}
+
+print time(1,2);
+
+fun try() {
+    print c;
+}
+
+try();
+
+print c;

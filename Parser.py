@@ -1,3 +1,4 @@
+from ast import keyword
 from ErrorHandler import *
 from Expr import *
 from Stmt import *
@@ -57,8 +58,16 @@ class Parser:
         if (self.__match(TokenType.LEFT_BRACE)):    return Block(self.__block())
         if (self.__match(TokenType.IF)):            return self.__if()
         if (self.__match(TokenType.WHILE)):         return self.__whileStmt()
+        if (self.__match(TokenType.RETURN)):        return self.__returnStmt()
         return  self.__exprStmt()
 
+    def __returnStmt(self) -> Stmt:
+        keyword = self.__previous()
+        val = None
+        if (not self.__check(TokenType.SEMICOLON)):
+            val = self.__expression()
+        self.__consume(TokenType.SEMICOLON, "Expect ; after return value.")
+        return ReturnStmt(keyword, val)
 
     def __forStmt(self) -> Stmt:
         self.__consume(TokenType.LEFT_PAREN, "Expect ( after for.")
