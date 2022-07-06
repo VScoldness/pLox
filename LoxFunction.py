@@ -2,12 +2,13 @@ from LoxCallable import *
 from Environment import *
 
 class LoxFuntion(LoxCallable):
-    def __init__(self, declaration: FuncStmt) -> None:
+    def __init__(self, declaration: FuncStmt, closure: Environment) -> None:
         self.declaration = declaration
+        self.closure = closure
     
     # override
     def call(self, interpreter, arguments: list[object]) -> object:
-        env = Environment(interpreter.globals)
+        env = Environment(self.closure)
         for idx in range(len(arguments)):
             env.define(self.declaration.params[idx].lexeme, arguments[idx])
         try:

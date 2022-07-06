@@ -28,7 +28,7 @@ class Interpreter(Visitor, VisitorStmt):
 
     # override
     def visitFuncStmt(self, stmt: FuncStmt) -> None:
-        func = LoxFuntion(stmt)
+        func = LoxFuntion(stmt, self.__env)
         self.__env.define(stmt.name.lexeme, func)
         return 
 
