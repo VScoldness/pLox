@@ -1,8 +1,9 @@
 from Scanner import *
-from Parser import *
+# from Parser import *
 from AstPrinter import *
 from ErrorHandler import *
 from Interpreter import *
+from Resolver import *
 
 class Lox:
     def __init__(self, input=None) -> None:
@@ -54,6 +55,9 @@ class Lox:
             # print(stmt)
             # print(stmt.body)
             # print(stmt.body.statements)
+        
+        resolver = Resolver(self.interpreter)
+        resolver.resolve(statements)
 
         self.interpreter.interpreter(statements)
         

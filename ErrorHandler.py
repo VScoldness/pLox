@@ -6,12 +6,12 @@ class ErrorHandler:
         self.hadError = False
     
 
-    def error(self, line:int, message:str) -> None:
-        self.__report(line, "", message)
-        return
+    # def error(self, line:int, message:str) -> None:
+    #     self.__report(line, "", message)
+    #     return
     
 
-    def parserError(self, token: Token, message: str) -> None:
+    def error(self, token: Token, message: str) -> None:
         if (token.type == TokenType.EOF):
             self.__report(token.line, " at end", message)
         return self.__report(token.line, " at '{}'".format(token.lexeme), message)

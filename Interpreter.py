@@ -5,6 +5,7 @@ class Interpreter(Visitor, VisitorStmt):
     def __init__(self) -> None:
         self.globals = Environment()
         self.__env   = self.globals
+        self.__locals = {}
 
 
     def interpreter(self, expressions: list[Stmt]) -> None:
@@ -17,6 +18,10 @@ class Interpreter(Visitor, VisitorStmt):
 
     def __evaluate(self, expr: Expr|Stmt) -> object:
         return expr.accept(self)
+
+
+    def resolve(self, expr: Expr, depth: int) -> None:
+        self.__locals[expr] = depth
 
 
     # overridee
@@ -99,14 +104,27 @@ class Interpreter(Visitor, VisitorStmt):
 
     # override
     def visitVariableExpr(self, expr: Variable) -> object:
-        return self.__env.get(expr.name)
+        return self.__lookUpVar(expr.name, expr)
+    
+
+    def __lookUpVar(self, name: Token, expr: Expr) -> object:
+        distance = self.__locals.get(expr)
+        if (distance != None):
+            return self.__env.getAt(distance, name.lexeme)
+        else:
+            return self.globals.get(name)
 
     
     # override
-    def visitAssignExpr(self, expr: Assign) -> None:
+    def visitAssignExpr(self, expr: Assign) -> object:
         val = self.__evaluate(expr.val)
-        self.__env.assign(expr.name, val)
-        return
+
+        distance = self.__locals.get(expr)
+        if (distance != None):
+            self.__env.assignAt(distance, expr.name, val)
+        else:
+            self.globals(expr.name, val)
+        return val
 
 
     # override
